@@ -12,27 +12,29 @@ A secure and modular Django-based Visitor Management System to manage visit requ
    cd vms
 
 2. **Create virtual environment**
-mkvirtualenv VMS  
-workon VMS
+   ```bash
+   mkvirtualenv VMS  
+   workon VMS
 
 
 3. **Install dependencies**
-
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
 
 4. **Apply database migrations**
-python manage.py makemigrations
-python manage.py migrate
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
 
 
 5. **Create a superuser**
-
-python manage.py createsuperuser
+   ```bash
+   python manage.py createsuperuser
 
 
 6. **Start the development server**
-
-python manage.py runserver
+    ```bash
+   python manage.py runserver
 
 
 Visit the app
