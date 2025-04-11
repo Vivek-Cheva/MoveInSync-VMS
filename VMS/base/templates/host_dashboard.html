@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Host Dashboard</title>
+</head>
+<body>
+    <h2>Welcome, {{ request.user.username }}</h2>
+
+    <p>
+        <a href="{% url 'host_pre_approve' %}">
+            <button>➕ Pre-Approve Visitor</button>
+        </a>
+    </p>
+
+    <h3>Your Visitor Requests</h3>
+
+    {% if visit_requests %}
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Visitor</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Purpose</th>
+                <th>Scheduled</th>
+                <th>Status</th>
+                <th>Photo</th>
+                <th>Actions</th>
+            </tr>
+            {% for visit in visit_requests %}
+                <tr>
+                    <td>{{ visit.visitor.full_name }}</td>
+                    <td>{{ visit.visitor.email }}</td>
+                    <td>{{ visit.visitor.contact_number }}</td>
+                    <td>{{ visit.visitor.purpose }}</td>
+                    <td>
+                        {{ visit.scheduled_start|date:"M d, H:i" }} - 
+                        {{ visit.scheduled_end|date:"H:i" }}
+                    </td>
+                    <td>
+                        {% if visit.approved == True %}
+                            ✅ Approved
+                        {% elif visit.approved == False %}
+                            ❌ Rejected
+                        {% else %}
+                            ⏳ Pending
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if visit.visitor.photo %}
+                            <a href="{{ visit.visitor.photo.url }}" target="_blank">
+                                <button>View Photo</button>
+                            </a>
+                        {% else %}
+                            No photo
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if visit.approved is None %}
+                            <a href="{% url 'approve_visit' ref=visit.reference_code %}">Approve</a> |
+                            <a href="{% url 'reject_visit' ref=visit.reference_code %}">Reject</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No visit requests found.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guard Check-In / Check-Out</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        .scanner {
+            width: 300px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Guard Panel</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <h3>Visitor Check-In</h3>
+            <input type="text" id="check_in_code" name="check_in_code" placeholder="Enter or Scan In Code">
+            <button type="submit">Check In</button>
+            <button type="button" onclick="startScanner('check_in')">📷 Scan</button>
+            <div id="check_in_scanner" class="scanner" style="display: none;"></div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3>Visitor Check-Out</h3>
+            <input type="text" id="check_out_code" name="check_out_code" placeholder="Enter or Scan Out Code">
+            <button type="submit">Check Out</button>
+            <button type="button" onclick="startScanner('check_out')">📷 Scan</button>
+            <div id="check_out_scanner" class="scanner" style="display: none;"></div>
+        </div>
+    </form>
+
+    {% if success %}
+        <p style="color: green;">✅ {{ success }}</p>
+    {% elif error %}
+        <p style="color: red;">❌ {{ error }}</p>
+    {% endif %}
+
+    <script>
+        let currentScanner;
+
+        function startScanner(type) {
+            const scannerId = `${type}_scanner`;
+            const inputId = `${type}_code`;
+
+            // Stop previous scanner
+            if (currentScanner) {
+                currentScanner.stop().then(() => {
+                    document.getElementById(currentScanner.scannerId).style.display = "none";
+                }).catch(err => console.error(err));
+            }
+
+            document.getElementById(scannerId).style.display = "block";
+
+            const html5QrCode = new Html5Qrcode(scannerId);
+            currentScanner = html5QrCode;
+            currentScanner.scannerId = scannerId;
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                qrCodeMessage => {
+                    const extractedId = qrCodeMessage.includes("VisitRef:") 
+                        ? qrCodeMessage.split("VisitRef:")[1] 
+                        : qrCodeMessage;
+                
+                    document.getElementById(inputId).value = extractedId;
+                
+                    html5QrCode.stop().then(() => {
+                        document.getElementById(scannerId).style.display = "none";
+                    });
+                },
+                errorMessage => {
+                    // console.log(`Scan error: ${errorMessage}`);
+                }
+            ).catch(err => {
+                console.error(`Unable to start scanner: ${err}`);
+            });
+        }
+    </script>
+</body>
+</html>

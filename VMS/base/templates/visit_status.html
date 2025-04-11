@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visit Status</title>
+</head>
+<body>
+    <h2>Visit Request Status</h2>
+
+    <p><strong>Visitor:</strong> {{ visit.visitor.full_name }}</p>
+    <p><strong>Contact:</strong> {{ visit.visitor.email }}</p>
+    <p><strong>Host:</strong> {{ visit.host.user.username }}</p>
+    <p><strong>Scheduled:</strong> {{ visit.scheduled_time }}</p>
+
+    <p><strong>Status:</strong>
+        {% if visit.approved is None %}
+            ⏳ Pending
+        {% elif visit.approved %}
+            ✅ Approved
+        {% else %}
+            ❌ Rejected
+        {% endif %}
+    </p>
+
+    {% if visit.qr_code %}
+        <p><strong>QR Code:</strong><br>
+            <img src="{{ visit.qr_code.url }}" alt="QR Code" width="200"></p>
+    {% endif %}
+</body>
+</html>

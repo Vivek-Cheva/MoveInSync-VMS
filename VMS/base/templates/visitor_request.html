@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visitor Request</title>
+</head>
+<body>
+    <h2>Request a Visit</h2>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    {% if visitor_form.errors or request_form.errors %}
+        <div style="color: red;">
+            <strong>There were errors with your submission:</strong>
+            <ul>
+                {% for field in visitor_form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in visitor_form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                {% for field in request_form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in request_form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h3>Visitor Information</h3>
+        {{ visitor_form.as_p }}
+
+        <h3>Capture Photo</h3>
+
+        <div id="video-section">
+            <video id="video" width="320" height="240" autoplay></video><br>
+            <button type="button" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+
+        <div id="snapshot-section" style="display: none;">
+            <img id="snapshot" src="" width="320" />
+            <br>
+            <button type="button" onclick="retakePhoto()">🔄 Retake</button>
+        </div>
+
+        <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+        <input type="hidden" name="photo_data" id="photo_data">
+
+        <h3>Visit Details</h3>
+        {{ request_form.as_p }}
+
+        <br><br>
+        <button type="submit">Submit Request</button>
+    </form>
+
+    <script>
+        let stream;
+
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snapshot = document.getElementById('snapshot');
+        const photoInput = document.getElementById('photo_data');
+
+        const videoSection = document.getElementById('video-section');
+        const snapshotSection = document.getElementById('snapshot-section');
+
+        // Start webcam stream
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((mediaStream) => {
+                stream = mediaStream;
+                video.srcObject = mediaStream;
+            })
+            .catch((err) => {
+                alert("Unable to access webcam: " + err);
+            });
+
+        function capturePhoto() {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/png');
+
+            snapshot.src = dataUrl;
+            photoInput.value = dataUrl;
+
+            snapshotSection.style.display = 'block';
+            videoSection.style.display = 'none';
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function retakePhoto() {
+            // Reinitialize the webcam
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((mediaStream) => {
+                    stream = mediaStream;
+                    video.srcObject = mediaStream;
+                    video.play();
+                });
+
+            snapshotSection.style.display = 'none';
+            videoSection.style.display = 'block';
+            photoInput.value = "";
+        }
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            if (!photoInput.value) {
+                e.preventDefault();
+                alert("⚠️ Please capture a photo before submitting.");
+            }
+        });
+    </script>
+</body>
+</html>

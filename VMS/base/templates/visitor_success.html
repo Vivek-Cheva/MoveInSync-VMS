@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Submitted</title>
+</head>
+<body>
+    <h2>Thank you!</h2>
+    <p>Your visit request has been submitted successfully.</p>
+
+    {% if tracking_url %}
+        <p>You can check your request status here:</p>
+        <a href="{{ tracking_url }}">{{ tracking_url }}</a>
+    {% endif %}
+
+    <p><a href="{% url 'home' %}">Back to Home</a></p>
+</body>
+</html>

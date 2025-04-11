@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome, {{ request.user.username }}</h2>
+    {% if request.user.is_staff %}
+        <p>You are an admin</p>
+        <ul>
+            <li><a href="{% url 'signup' 'host' %}">Create Host</a></li>
+            <li><a href="{% url 'signup' 'guard' %}">Create Guard</a></li>
+        </ul>
+    {% endif %}
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+</body>
+</html>

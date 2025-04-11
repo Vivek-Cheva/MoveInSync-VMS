@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pre-Approve Visitor</title>
+</head>
+<body>
+    <h2>Pre-Approval Form</h2>
+    
+    
+
+    <p>approvals today: {{ used_today }} / {{ max_limit }}</p>
+    {% if visitor_form.errors or request_form.errors %}
+  <div style="color: red;">
+    <strong>Form submission failed:</strong>
+    <ul>
+      {% for field in visitor_form %}
+        {% for error in field.errors %}
+          <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in visitor_form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+      {% for field in request_form %}
+        {% for error in field.errors %}
+          <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in request_form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+    
+    {% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <p style="color: red;">{{ message }}</p>
+    {% else %}
+      <p style="color: green;">{{ message }}</p>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+    <form method="post" enctype="multipart/form-data">
+        
+        {% csrf_token %}
+        <h3>Visitor Details</h3>
+        {{ visitor_form.as_p }}
+
+        <h3>Host</h3>
+{{ request_form.host.label_tag }} {{ request_form.host }}
+
+        <h3>Visit Slot</h3>
+        
+
+        {{ request_form.scheduled_start.label_tag }} {{ request_form.scheduled_start }}
+        {{ request_form.scheduled_end.label_tag }} {{ request_form.scheduled_end }}
+
+        <br><br>
+        <button type="submit">Pre-Approve</button>
+    </form>
+
+    <p><a href="{% url 'host_dashboard' %}">← Back to Dashboard</a></p>
+</body>
+</html>
