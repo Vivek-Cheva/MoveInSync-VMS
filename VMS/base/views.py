@@ -1,4 +1,4 @@
-# myapp/views.py
+
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -133,7 +133,7 @@ def visitor_request_view(request):
 
             visitor = visitor_form.save(commit=False)
 
-            # If photo was captured via webcam (base64)
+            # If photo was captured via webcam 
             if photo_data:
                 try:
                     format, imgstr = photo_data.split(';base64,')
