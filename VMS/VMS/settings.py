@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 TIME_ZONE = 'Asia/Kolkata'
-  
+  # Keep this True for consistency
 # Application definition
 
 INSTALLED_APPS = [
@@ -135,4 +135,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'vivek.cheva@gmail.com'        # use your Gmail
-EMAIL_HOST_PASSWORD = '<your_host_password>' 
+EMAIL_HOST_PASSWORD = 'jicc lajl mguo oyux' 
